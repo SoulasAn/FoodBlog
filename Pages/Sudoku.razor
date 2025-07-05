@@ -1,0 +1,167 @@
+@page "/sudoku"
+
+<h1>Sudoku</h1>
+<p>Fill in the puzzle by selecting a cell and then a number.</p>
+
+<table class="sudoku-board">
+@for (int r = 0; r < 9; r++)
+{
+    <tr>
+    @for (int c = 0; c < 9; c++)
+    {
+        var row = r; // prevent closure capture bug
+        var col = c;
+        <td>
+            <input value="@board[row][col]"
+                   readonly
+                   @onclick="(() => SelectCell(row, col))"
+                   class="@GetCellClass(row, col)" />
+        </td>
+    }
+    </tr>
+}
+</table>
+
+<div class="number-buttons">
+@for (int n = 1; n <= 9; n++)
+{
+    var num = n; // avoid closure capture issue
+    <button @onclick="(() => EnterNumber(num.ToString()))">@num</button>
+}
+    <button @onclick="ClearCell">Clear</button>
+</div>
+
+<button class="btn btn-secondary" @onclick="CheckSolution">Check</button>
+@if (!string.IsNullOrEmpty(message))
+{
+    <p>@message</p>
+}
+
+@code {
+    private string[][] board = new string[9][];
+    private bool[][] given = new bool[9][];
+    private bool[][] error = new bool[9][];
+    private string[][] solution = new string[9][];
+    private int? selectedRow;
+    private int? selectedCol;
+    private string? message;
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            board[i] = new string[9];
+            given[i] = new bool[9];
+            error[i] = new bool[9];
+            solution[i] = new string[9];
+        }
+
+        string[] puzzle = new string[]
+        {
+            "53--7----",
+            "6--195---",
+            "-98----6-",
+            "8---6---3",
+            "4--8-3--1",
+            "7---2---6",
+            "-6----28-",
+            "---419--5",
+            "----8--79"
+        };
+
+        string[] solved = new string[]
+        {
+            "534678912",
+            "672195348",
+            "198342567",
+            "859761423",
+            "426853791",
+            "713924856",
+            "961537284",
+            "287419635",
+            "345286179"
+        };
+
+        for (int r = 0; r < 9; r++)
+        {
+            for (int c = 0; c < 9; c++)
+            {
+                char ch = puzzle[r][c];
+                solution[r][c] = solved[r][c].ToString();
+                if (ch != '-')
+                {
+                    board[r][c] = ch.ToString();
+                    given[r][c] = true;
+                }
+            }
+        }
+    }
+
+    private string GetCellClass(int r, int c)
+    {
+        var classes = new List<string>();
+        if (given[r][c])
+        {
+            classes.Add("given");
+        }
+        if (error[r][c])
+        {
+            classes.Add("error");
+        }
+        if (selectedRow == r && selectedCol == c)
+        {
+            classes.Add("selected");
+        }
+        return string.Join(" ", classes);
+    }
+
+    private void SelectCell(int r, int c)
+    {
+        if (given[r][c])
+        {
+            return;
+        }
+        selectedRow = r;
+        selectedCol = c;
+    }
+
+    private void EnterNumber(string value)
+    {
+        if (selectedRow is null || selectedCol is null)
+        {
+            return;
+        }
+        int r = selectedRow.Value;
+        int c = selectedCol.Value;
+        board[r][c] = value;
+        error[r][c] = board[r][c] != solution[r][c];
+    }
+
+    private void ClearCell()
+    {
+        if (selectedRow is null || selectedCol is null)
+        {
+            return;
+        }
+        int r = selectedRow.Value;
+        int c = selectedCol.Value;
+        board[r][c] = string.Empty;
+        error[r][c] = false;
+    }
+
+    private void CheckSolution()
+    {
+        for (int r = 0; r < 9; r++)
+        {
+            for (int c = 0; c < 9; c++)
+            {
+                if (board[r][c] != solution[r][c])
+                {
+                    message = "There are mistakes.";
+                    return;
+                }
+            }
+        }
+        message = "Looks good!";
+    }
+}

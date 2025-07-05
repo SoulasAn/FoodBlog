@@ -66,3 +66,67 @@ body {
     flex: 1;
     padding: 1rem;
 }
+
+.sudoku-board {
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: #fff;
+}
+
+.sudoku-board td {
+    border: 1px solid #555;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}
+
+.sudoku-board input {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    border: none;
+    background: transparent;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.sudoku-board input.given {
+    background-color: #eee;
+    cursor: default;
+}
+
+.sudoku-board input.error {
+    background-color: #faa;
+}
+
+.sudoku-board input.selected {
+    border: 2px solid #007bff;
+}
+
+.sudoku-board tr:nth-child(3n) td {
+    border-bottom: 2px solid #000;
+}
+
+.sudoku-board td:nth-child(3n) {
+    border-right: 2px solid #000;
+}
+
+.sudoku-board tr:first-child td {
+    border-top: 2px solid #000;
+}
+
+.sudoku-board td:first-child {
+    border-left: 2px solid #000;
+}
+
+.number-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.number-buttons button {
+    width: 30px;
+    height: 30px;
+}
