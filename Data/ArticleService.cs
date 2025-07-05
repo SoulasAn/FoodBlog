@@ -43,6 +43,23 @@ public class ArticleService
         await SaveAsync();
     }
 
+    public Task<Article?> GetArticleAsync(string id)
+    {
+        var article = _articles.FirstOrDefault(a => a.Id == id);
+        return Task.FromResult(article);
+    }
+
+    public async Task UpdateArticleAsync(Article article)
+    {
+        var existing = _articles.FirstOrDefault(a => a.Id == article.Id);
+        if (existing != null)
+        {
+            existing.Title = article.Title;
+            existing.Content = article.Content;
+            await SaveAsync();
+        }
+    }
+
     private async Task SaveAsync()
     {
         var json = JsonSerializer.Serialize(_articles);

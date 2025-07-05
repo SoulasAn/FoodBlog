@@ -1,0 +1,42 @@
+@inject IJSRuntime JS
+<div class="editor-toolbar mb-2">
+    <button type="button" class="btn btn-secondary btn-sm me-1" @onclick="() => Exec("bold")"><strong>B</strong></button>
+    <button type="button" class="btn btn-secondary btn-sm me-1" @onclick="() => Exec("italic")"><em>I</em></button>
+    <button type="button" class="btn btn-secondary btn-sm" @onclick="() => Exec("underline")"><u>U</u></button>
+</div>
+<div id="@_id" class="form-control rich-editor" contenteditable="true" @onblur="OnBlur"></div>
+
+@code {
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    private string _id = $"editor_{Guid.NewGuid():N}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("foodBlogEditor.setHtml", _id, Value);
+        }
+    }
+
+    private async Task Exec(string command)
+    {
+        await JS.InvokeVoidAsync("foodBlogEditor.exec", command);
+        await UpdateValue();
+    }
+
+    private async Task OnBlur()
+    {
+        await UpdateValue();
+    }
+
+    private async Task UpdateValue()
+    {
+        Value = await JS.InvokeAsync<string>("foodBlogEditor.getHtml", _id);
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

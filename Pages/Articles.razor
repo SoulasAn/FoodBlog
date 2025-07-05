@@ -20,7 +20,10 @@ else
     @foreach (var article in articles)
     {
         <li>
-            <strong>@article.Title</strong> - @article.Created.ToLocalTime().ToString("g")
+            <NavLink href="/article/@article.Id">
+                <strong>@article.Title</strong>
+            </NavLink>
+            <span class="ms-2 text-muted">@article.Created.ToLocalTime().ToString("g")</span>
         </li>
     }
     </ul>
