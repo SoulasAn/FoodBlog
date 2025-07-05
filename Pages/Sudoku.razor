@@ -1,0 +1,122 @@
+@page "/sudoku"
+
+<h1>Sudoku</h1>
+<p>Fill in the puzzle and press Check when you're done.</p>
+
+<table class="sudoku-board">
+@for (int r = 0; r < 9; r++)
+{
+    <tr>
+    @for (int c = 0; c < 9; c++)
+    {
+        <td>
+            <input value="@board[r][c]" @oninput="(e => board[r][c] = FilterInput(e.Value))" maxlength="1" />
+        </td>
+    }
+    </tr>
+}
+</table>
+
+<button class="btn btn-secondary" @onclick="CheckSolution">Check</button>
+@if (!string.IsNullOrEmpty(message))
+{
+    <p>@message</p>
+}
+
+@code {
+    private string[][] board = new string[9][];
+    private string? message;
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            board[i] = new string[9];
+        }
+
+        string[] puzzle = new string[]
+        {
+            "53--7----",
+            "6--195---",
+            "-98----6-",
+            "8---6---3",
+            "4--8-3--1",
+            "7---2---6",
+            "-6----28-",
+            "---419--5",
+            "----8--79"
+        };
+
+        for (int r = 0; r < 9; r++)
+        {
+            for (int c = 0; c < 9; c++)
+            {
+                char ch = puzzle[r][c];
+                if (ch != '-')
+                {
+                    board[r][c] = ch.ToString();
+                }
+            }
+        }
+    }
+
+    private string FilterInput(object? value)
+    {
+        var s = value?.ToString() ?? string.Empty;
+        if (s.Length > 1)
+        {
+            s = s[^1].ToString();
+        }
+        if ("123456789".Contains(s))
+        {
+            return s;
+        }
+        return string.Empty;
+    }
+
+    private void CheckSolution()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            var row = new HashSet<string>();
+            var col = new HashSet<string>();
+            for (int j = 0; j < 9; j++)
+            {
+                string r = board[i][j];
+                string c = board[j][i];
+                if (string.IsNullOrEmpty(r) || string.IsNullOrEmpty(c))
+                {
+                    message = "Puzzle incomplete";
+                    return;
+                }
+                if (!row.Add(r) || !col.Add(c))
+                {
+                    message = "There are duplicates";
+                    return;
+                }
+            }
+        }
+
+        for (int br = 0; br < 9; br += 3)
+        {
+            for (int bc = 0; bc < 9; bc += 3)
+            {
+                var block = new HashSet<string>();
+                for (int r = 0; r < 3; r++)
+                {
+                    for (int c = 0; c < 3; c++)
+                    {
+                        string val = board[br + r][bc + c];
+                        if (!block.Add(val))
+                        {
+                            message = "There are duplicates";
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        message = "Looks good!";
+    }
+}
