@@ -4,6 +4,68 @@ body {
     padding: 0;
 }
 
-.navbar-brand {
-    font-weight: bold;
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+    z-index: 1000;
+}
+
+.footer {
+    height: 40px;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page {
+    padding-top: 60px;
+    display: flex;
+}
+
+.sidebar {
+    position: fixed;
+    top: 60px;
+    bottom: 40px;
+    left: 0;
+    width: 60px;
+    background-color: #444;
+    overflow-x: hidden;
+    transition: width 0.3s;
+}
+
+.sidebar:hover {
+    width: 200px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li a {
+    display: block;
+    color: #fff;
+    padding: 1rem;
+    text-decoration: none;
+}
+
+.sidebar li a.active {
+    background-color: #555;
+}
+
+.main-content {
+    margin-left: 60px;
+    flex: 1;
+    padding: 1rem;
 }

@@ -2,12 +2,18 @@
 
 <PageTitle>FoodBlog</PageTitle>
 
+<header class="header">
+    <h1>FoodBlog</h1>
+</header>
+
 <div class="page">
     <NavMenu />
-
-    <main>
+    <main class="main-content">
         <article class="content px-4">
             @Body
         </article>
+        <footer class="footer">
+            &copy; @DateTime.Now.Year FoodBlog
+        </footer>
     </main>
 </div>
