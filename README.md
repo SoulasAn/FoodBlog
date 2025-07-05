@@ -12,11 +12,15 @@ This repository contains the basic boilerplate for a Blazor WebAssembly project.
 - `Shared/` - shared components and layout
 - `wwwroot/` - static assets
 
+## Requirements
+- [.NET SDK 7.0 or newer](https://dotnet.microsoft.com/download)
+
 ## Running
-To build and run this project you need the [.NET SDK](https://dotnet.microsoft.com/). Once installed, execute:
+After installing the .NET SDK, restore dependencies and launch the development server:
 
 ```bash
-dotnet run
+dotnet restore
+dotnet watch run
 ```
 
-This will host the application locally.
+The application will be available locally and reload on file changes.
