@@ -1,4 +1,6 @@
 @page "/sudoku"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 
 <h1>Sudoku</h1>
 <p>Fill in the puzzle by selecting a cell and then a number.</p>
@@ -48,6 +50,11 @@
 
     protected override void OnInitialized()
     {
+        if (AuthService.IsInRole("Reader") || string.IsNullOrEmpty(AuthService.Role))
+        {
+            Navigation.NavigateTo("/articles");
+            return;
+        }
         for (int i = 0; i < 9; i++)
         {
             board[i] = new string[9];

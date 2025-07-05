@@ -1,6 +1,18 @@
 @page "/"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 
 <h1>Welcome to FoodBlog</h1>
 
 <p>This is the home page.</p>
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (AuthService.IsInRole("Reader") || string.IsNullOrEmpty(AuthService.Role))
+        {
+            Navigation.NavigateTo("/articles");
+        }
+    }
+}
 

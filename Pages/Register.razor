@@ -1,0 +1,76 @@
+@page "/register"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<h1>Register</h1>
+
+@if (!registered)
+{
+    if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+    <EditForm Model="this" OnValidSubmit="HandleRegister">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <InputText class="form-control" @bind-Value="username" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <InputText type="password" class="form-control" @bind-Value="password" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText type="email" class="form-control" @bind-Value="email" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">What is @numA + @numB?</label>
+            <InputNumber int? class="form-control" @bind-Value="robotAnswer" />
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </EditForm>
+}
+else
+{
+    <p>Registration successful! A verification code has been sent to your email.</p>
+    <p><strong>Code: @verificationCode</strong></p>
+    <NavLink href=@($"/verify?user={username}")>Verify account</NavLink>
+}
+
+@code {
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private string email = string.Empty;
+    private int numA;
+    private int numB;
+    private int? robotAnswer;
+    private string? error;
+    private bool registered = false;
+    private string? verificationCode;
+
+    protected override void OnInitialized()
+    {
+        var rnd = new Random();
+        numA = rnd.Next(1, 10);
+        numB = rnd.Next(1, 10);
+    }
+
+    private async Task HandleRegister()
+    {
+        if (robotAnswer != numA + numB)
+        {
+            error = "Incorrect robot verification.";
+            return;
+        }
+        var code = await AuthService.RegisterReaderAsync(username, password, email);
+        if (code == null)
+        {
+            error = "Username already exists.";
+            return;
+        }
+        verificationCode = code;
+        registered = true;
+    }
+}

@@ -1,4 +1,6 @@
 @page "/counter"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 
 <h1>Counter</h1>
 
@@ -13,5 +15,13 @@
     private void IncrementCount()
     {
         currentCount++;
+    }
+
+    protected override void OnInitialized()
+    {
+        if (AuthService.IsInRole("Reader") || string.IsNullOrEmpty(AuthService.Role))
+        {
+            Navigation.NavigateTo("/articles");
+        }
     }
 }

@@ -1,3 +1,4 @@
+@inject AuthService AuthService
 <nav class="sidebar">
     <ul>
         <li>
@@ -15,5 +16,11 @@
         <li>
             <NavLink href="articles">Articles</NavLink>
         </li>
+        @if (AuthService.IsInRole("Administrator"))
+        {
+            <li>
+                <NavLink href="create-editor">Create Editor</NavLink>
+            </li>
+        }
     </ul>
 </nav>
