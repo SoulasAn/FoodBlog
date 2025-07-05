@@ -1,6 +1,7 @@
 @page "/new-article"
 @inject ArticleService ArticleService
 @inject NavigationManager Navigation
+@inject AuthService AuthService
 
 <h1>New Article</h1>
 
@@ -24,6 +25,14 @@
 
 @code {
     private Article article = new();
+
+    protected override void OnInitialized()
+    {
+        if (!(AuthService.IsInRole("Administrator") || AuthService.IsInRole("Editor")))
+        {
+            Navigation.NavigateTo("/articles");
+        }
+    }
 
     private async Task HandleValidSubmit()
     {

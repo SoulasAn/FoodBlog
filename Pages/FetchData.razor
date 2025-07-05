@@ -1,6 +1,8 @@
 @page "/fetchdata"
 @using FoodBlog.Data
 @inject HttpClient Http
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 
 <h1>Weather forecast</h1>
 
@@ -41,6 +43,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (AuthService.IsInRole("Reader") || string.IsNullOrEmpty(AuthService.Role))
+        {
+            Navigation.NavigateTo("/articles");
+            return;
+        }
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 }

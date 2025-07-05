@@ -1,0 +1,62 @@
+@page "/login"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<h1>Login</h1>
+
+@if (loggedIn)
+{
+    <p>You are logged in as @AuthService.Username (@AuthService.Role).</p>
+    <button class="btn btn-primary" @onclick="Logout">Logout</button>
+}
+else
+{
+    if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+    <EditForm Model="this" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <InputText class="form-control" @bind-Value="username" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <InputText type="password" class="form-control" @bind-Value="password" />
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </EditForm>
+    <p class="mt-2">Don't have an account? <NavLink href="/register">Register</NavLink></p>
+}
+
+@code {
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private string? error;
+
+    private bool loggedIn => !string.IsNullOrEmpty(AuthService.Username);
+
+    private async Task HandleLogin()
+    {
+        var result = await AuthService.LoginAsync(username, password);
+        if (!result)
+        {
+            error = AuthService.LastError;
+            if (error == "Account not verified.")
+            {
+                error += $" <a href='/verify?user={username}'>Verify here</a>";
+            }
+        }
+        else
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+    }
+}

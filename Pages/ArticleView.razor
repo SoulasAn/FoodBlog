@@ -1,5 +1,6 @@
 @page "/article/{id}"
 @inject ArticleService ArticleService
+@inject AuthService AuthService
 
 <h1>@article?.Title</h1>
 
@@ -10,7 +11,10 @@
 else
 {
     <div class="mb-3">@((MarkupString)article.Content)</div>
-    <NavLink class="btn btn-secondary" href=@($"/edit-article/{id}")>Edit</NavLink>
+    @if (AuthService.IsInRole("Administrator") || AuthService.IsInRole("Editor"))
+    {
+        <NavLink class="btn btn-secondary" href=@($"/edit-article/{id}")>Edit</NavLink>
+    }
 }
 
 @code {

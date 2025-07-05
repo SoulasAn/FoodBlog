@@ -1,14 +1,28 @@
 @inherits LayoutComponentBase
+@inject AuthService AuthService
+@implements IDisposable
 
 <PageTitle>FoodBlog</PageTitle>
 
-<header class="header">
-    <h1>FoodBlog</h1>
+<header class="header d-flex align-items-center px-2">
+    <h1 class="me-auto">FoodBlog</h1>
+    @if (string.IsNullOrEmpty(AuthService.Username))
+    {
+        <NavLink class="text-white" href="/login">Login</NavLink>
+    }
+    else
+    {
+        <span class="text-white me-2">@AuthService.Username (@AuthService.Role)</span>
+        <a href="#" class="text-white" @onclick="Logout">Logout</a>
+    }
 </header>
 
 <div class="page">
-    <NavMenu />
-    <main class="main-content">
+    @if (!AuthService.IsInRole("Reader"))
+    {
+        <NavMenu />
+    }
+    <main class="main-content" style="margin-left:@(AuthService.IsInRole("Reader") ? "0" : "200px")">
         <article class="content px-4">
             @Body
         </article>
@@ -17,3 +31,25 @@
         </footer>
     </main>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AuthService.AuthStateChanged += OnAuthStateChanged;
+    }
+
+    private void OnAuthStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+    }
+
+    public void Dispose()
+    {
+        AuthService.AuthStateChanged -= OnAuthStateChanged;
+    }
+}
