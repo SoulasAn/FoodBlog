@@ -1,0 +1,44 @@
+@page "/articles"
+@inject NavigationManager Navigation
+@inject ArticleService ArticleService
+
+<h1>Articles</h1>
+
+<button class="btn btn-primary" @onclick="CreateNew">New Article</button>
+
+@if (articles == null)
+{
+    <p>Loading...</p>
+}
+else if (articles.Count == 0)
+{
+    <p>No articles yet.</p>
+}
+else
+{
+    <ul>
+    @foreach (var article in articles)
+    {
+        <li>
+            <NavLink href=@($"/article/{article.Id}")>
+                <strong>@article.Title</strong>
+            </NavLink>
+            <span class="ms-2 text-muted">@article.Created.ToLocalTime().ToString("g")</span>
+        </li>
+    }
+    </ul>
+}
+
+@code {
+    private List<Article>? articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        articles = await ArticleService.GetArticlesAsync();
+    }
+
+    private void CreateNew()
+    {
+        Navigation.NavigateTo("/new-article");
+    }
+}

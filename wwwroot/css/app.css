@@ -130,3 +130,13 @@ body {
     width: 30px;
     height: 30px;
 }
+
+.rich-editor {
+    min-height: 200px;
+}
+
+.editor-toolbar button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+}

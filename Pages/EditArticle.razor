@@ -1,0 +1,48 @@
+@page "/edit-article/{id}"
+@inject ArticleService ArticleService
+@inject NavigationManager Navigation
+
+<h1>Edit Article</h1>
+
+@if (article == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="article" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <InputText class="form-control" @bind-Value="article.Title" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Content</label>
+            <RichTextEditor @bind-Value="article.Content" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <NavLink class="btn btn-secondary ms-2" href=@($"/article/{id}")>Cancel</NavLink>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; } = string.Empty;
+
+    private Article? article;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        article = await ArticleService.GetArticleAsync(id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (article != null)
+        {
+            await ArticleService.UpdateArticleAsync(article);
+            Navigation.NavigateTo($"/article/{id}");
+        }
+    }
+}

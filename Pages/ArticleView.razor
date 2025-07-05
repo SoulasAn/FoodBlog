@@ -1,0 +1,26 @@
+@page "/article/{id}"
+@inject ArticleService ArticleService
+
+<h1>@article?.Title</h1>
+
+@if (article == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="mb-3">@((MarkupString)article.Content)</div>
+    <NavLink class="btn btn-secondary" href=@($"/edit-article/{id}")>Edit</NavLink>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; } = string.Empty;
+
+    private Article? article;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        article = await ArticleService.GetArticleAsync(id);
+    }
+}
