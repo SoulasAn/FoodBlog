@@ -416,6 +416,3 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-
-# Ignore generated background image
-wwwroot/images/foodtable.png
