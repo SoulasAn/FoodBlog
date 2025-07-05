@@ -70,6 +70,7 @@ body {
 .sudoku-board {
     border-collapse: collapse;
     margin-bottom: 1rem;
+    background-color: #fff;
 }
 
 .sudoku-board td {
@@ -87,6 +88,19 @@ body {
     background: transparent;
 }
 
+.sudoku-board input.given {
+    background-color: #eee;
+    cursor: default;
+}
+
+.sudoku-board input.error {
+    background-color: #faa;
+}
+
+.sudoku-board input.selected {
+    outline: 2px solid #007bff;
+}
+
 .sudoku-board tr:nth-child(3n) td {
     border-bottom: 2px solid #000;
 }
@@ -101,4 +115,15 @@ body {
 
 .sudoku-board td:first-child {
     border-left: 2px solid #000;
+}
+
+.number-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.number-buttons button {
+    width: 30px;
+    height: 30px;
 }

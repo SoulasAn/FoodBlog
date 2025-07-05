@@ -1,7 +1,7 @@
 @page "/sudoku"
 
 <h1>Sudoku</h1>
-<p>Fill in the puzzle and press Check when you're done.</p>
+<p>Fill in the puzzle by selecting a cell and then a number.</p>
 
 <table class="sudoku-board">
 @for (int r = 0; r < 9; r++)
@@ -10,12 +10,23 @@
     @for (int c = 0; c < 9; c++)
     {
         <td>
-            <input value="@board[r][c]" @oninput="(e => board[r][c] = FilterInput(e.Value))" maxlength="1" />
+            <input value="@board[r][c]"
+                   readonly
+                   @onclick="(() => SelectCell(r, c))"
+                   class="@GetCellClass(r, c)" />
         </td>
     }
     </tr>
 }
 </table>
+
+<div class="number-buttons">
+@for (int n = 1; n <= 9; n++)
+{
+    <button @onclick="(() => EnterNumber(n.ToString()))">@n</button>
+}
+    <button @onclick="ClearCell">Clear</button>
+</div>
 
 <button class="btn btn-secondary" @onclick="CheckSolution">Check</button>
 @if (!string.IsNullOrEmpty(message))
@@ -25,6 +36,11 @@
 
 @code {
     private string[][] board = new string[9][];
+    private bool[][] given = new bool[9][];
+    private bool[][] error = new bool[9][];
+    private string[][] solution = new string[9][];
+    private int? selectedRow;
+    private int? selectedCol;
     private string? message;
 
     protected override void OnInitialized()
@@ -32,6 +48,9 @@
         for (int i = 0; i < 9; i++)
         {
             board[i] = new string[9];
+            given[i] = new bool[9];
+            error[i] = new bool[9];
+            solution[i] = new string[9];
         }
 
         string[] puzzle = new string[]
@@ -47,76 +66,99 @@
             "----8--79"
         };
 
+        string[] solved = new string[]
+        {
+            "534678912",
+            "672195348",
+            "198342567",
+            "859761423",
+            "426853791",
+            "713924856",
+            "961537284",
+            "287419635",
+            "345286179"
+        };
+
         for (int r = 0; r < 9; r++)
         {
             for (int c = 0; c < 9; c++)
             {
                 char ch = puzzle[r][c];
+                solution[r][c] = solved[r][c].ToString();
                 if (ch != '-')
                 {
                     board[r][c] = ch.ToString();
+                    given[r][c] = true;
                 }
             }
         }
     }
 
-    private string FilterInput(object? value)
+    private string GetCellClass(int r, int c)
     {
-        var s = value?.ToString() ?? string.Empty;
-        if (s.Length > 1)
+        var classes = new List<string>();
+        if (given[r][c])
         {
-            s = s[^1].ToString();
+            classes.Add("given");
         }
-        if ("123456789".Contains(s))
+        if (error[r][c])
         {
-            return s;
+            classes.Add("error");
         }
-        return string.Empty;
+        if (selectedRow == r && selectedCol == c)
+        {
+            classes.Add("selected");
+        }
+        return string.Join(" ", classes);
+    }
+
+    private void SelectCell(int r, int c)
+    {
+        if (given[r][c])
+        {
+            return;
+        }
+        selectedRow = r;
+        selectedCol = c;
+    }
+
+    private void EnterNumber(string value)
+    {
+        if (selectedRow is null || selectedCol is null)
+        {
+            return;
+        }
+        int r = selectedRow.Value;
+        int c = selectedCol.Value;
+        board[r][c] = value;
+        error[r][c] = board[r][c] != solution[r][c];
+    }
+
+    private void ClearCell()
+    {
+        if (selectedRow is null || selectedCol is null)
+        {
+            return;
+        }
+        int r = selectedRow.Value;
+        int c = selectedCol.Value;
+        board[r][c] = string.Empty;
+        error[r][c] = false;
     }
 
     private void CheckSolution()
     {
-        for (int i = 0; i < 9; i++)
+        for (int r = 0; r < 9; r++)
         {
-            var row = new HashSet<string>();
-            var col = new HashSet<string>();
-            for (int j = 0; j < 9; j++)
+            for (int c = 0; c < 9; c++)
             {
-                string r = board[i][j];
-                string c = board[j][i];
-                if (string.IsNullOrEmpty(r) || string.IsNullOrEmpty(c))
+                if (board[r][c] != solution[r][c])
                 {
-                    message = "Puzzle incomplete";
-                    return;
-                }
-                if (!row.Add(r) || !col.Add(c))
-                {
-                    message = "There are duplicates";
+                    message = "There are mistakes.";
                     return;
                 }
             }
         }
-
-        for (int br = 0; br < 9; br += 3)
-        {
-            for (int bc = 0; bc < 9; bc += 3)
-            {
-                var block = new HashSet<string>();
-                for (int r = 0; r < 3; r++)
-                {
-                    for (int c = 0; c < 3; c++)
-                    {
-                        string val = board[br + r][bc + c];
-                        if (!block.Add(val))
-                        {
-                            message = "There are duplicates";
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
         message = "Looks good!";
     }
 }
