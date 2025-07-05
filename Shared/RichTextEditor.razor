@@ -1,8 +1,8 @@
 @inject IJSRuntime JS
 <div class="editor-toolbar mb-2">
-    <button type="button" class="btn btn-secondary btn-sm me-1" @onclick="() => Exec('bold')"><strong>B</strong></button>
-    <button type="button" class="btn btn-secondary btn-sm me-1" @onclick="() => Exec('italic')"><em>I</em></button>
-    <button type="button" class="btn btn-secondary btn-sm" @onclick="() => Exec('underline')"><u>U</u></button>
+    <button type="button" class="btn btn-secondary btn-sm me-1" @onclick="() => Exec(Commands.Bold)"><strong>B</strong></button>
+    <button type="button" class="btn btn-secondary btn-sm me-1" @onclick="() => Exec(Commands.Italic)"><em>I</em></button>
+    <button type="button" class="btn btn-secondary btn-sm" @onclick="() => Exec(Commands.Underline)"><u>U</u></button>
 </div>
 <div id="@_id" class="form-control rich-editor" contenteditable="true" @onblur="OnBlur"></div>
 
@@ -15,6 +15,13 @@
 
     private string _id = $"editor_{Guid.NewGuid():N}";
 
+    private enum Commands
+    {
+        Bold,
+        Italic,
+        Underline
+    }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -23,9 +30,15 @@
         }
     }
 
-    private async Task Exec(string command)
+    private async Task Exec(Commands command)
     {
-        await JS.InvokeVoidAsync("foodBlogEditor.exec", command);
+        await JS.InvokeVoidAsync("foodBlogEditor.exec", command switch
+        {
+            Commands.Bold => "bold",
+            Commands.Italic => "italic",
+            Commands.Underline => "underline",
+            _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)
+        });
         await UpdateValue();
     }
 
