@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2020-05-01",
+    "temperatureC": 25,
+    "summary": "Warm"
+  },
+  {
+    "date": "2020-05-02",
+    "temperatureC": 28,
+    "summary": "Hot"
+  }
+]
