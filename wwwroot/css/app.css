@@ -65,6 +65,11 @@ body {
     margin-left: 200px;
     flex: 1;
     padding: 1rem;
+    background-color: #fff;
+}
+
+.content {
+    background-color: #fff;
 }
 
 .sudoku-board {

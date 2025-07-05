@@ -8,8 +8,12 @@
 {
     <p>You are not authorized to view this page.</p>
 }
-else if (!created)
+else
 {
+    if (created)
+    {
+        <div class="alert alert-success">Editor created.</div>
+    }
     if (!string.IsNullOrEmpty(error))
     {
         <div class="alert alert-danger">@error</div>
@@ -28,10 +32,6 @@ else if (!created)
         <button type="submit" class="btn btn-primary">Create</button>
     </EditForm>
 }
-else
-{
-    <p>Editor created.</p>
-}
 
 @code {
     private string username = string.Empty;
@@ -49,6 +49,9 @@ else
         else
         {
             created = true;
+            error = null;
+            username = string.Empty;
+            password = string.Empty;
         }
     }
 }

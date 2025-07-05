@@ -45,4 +45,9 @@ A default administrator account is created automatically:
 Administrators can create editor accounts from the **Create Editor** page. Regular
 readers register through the **Register** page. A simple math question prevents
 bot signups and a verification code must be entered on the **Verify** page
-before a reader can log in.
+before a reader can log in. Enter the answer to the math question in the numeric
+field below the email input when registering.
+
+To create an editor account, log in with the administrator credentials above and
+navigate to `/create-editor` (available from the navigation menu). The page lets
+you choose a username and password for the new editor.
