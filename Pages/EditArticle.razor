@@ -22,7 +22,7 @@ else
             <RichTextEditor @bind-Value="article.Content" />
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
-        <NavLink class="btn btn-secondary ms-2" href="/article/@id">Cancel</NavLink>
+        <NavLink class="btn btn-secondary ms-2" href=@($"/article/{id}")>Cancel</NavLink>
     </EditForm>
 }
 

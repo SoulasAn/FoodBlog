@@ -10,7 +10,7 @@
 else
 {
     <div class="mb-3">@((MarkupString)article.Content)</div>
-    <NavLink class="btn btn-secondary" href="/edit-article/@id">Edit</NavLink>
+    <NavLink class="btn btn-secondary" href=@($"/edit-article/{id}")>Edit</NavLink>
 }
 
 @code {
