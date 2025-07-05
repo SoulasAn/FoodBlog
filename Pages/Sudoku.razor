@@ -9,11 +9,13 @@
     <tr>
     @for (int c = 0; c < 9; c++)
     {
+        var row = r; // prevent closure capture bug
+        var col = c;
         <td>
-            <input value="@board[r][c]"
+            <input value="@board[row][col]"
                    readonly
-                   @onclick="(() => SelectCell(r, c))"
-                   class="@GetCellClass(r, c)" />
+                   @onclick="(() => SelectCell(row, col))"
+                   class="@GetCellClass(row, col)" />
         </td>
     }
     </tr>
@@ -23,7 +25,8 @@
 <div class="number-buttons">
 @for (int n = 1; n <= 9; n++)
 {
-    <button @onclick="(() => EnterNumber(n.ToString()))">@n</button>
+    var num = n; // avoid closure capture issue
+    <button @onclick="(() => EnterNumber(num.ToString()))">@num</button>
 }
     <button @onclick="ClearCell">Clear</button>
 </div>
